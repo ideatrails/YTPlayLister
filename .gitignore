@@ -1,0 +1,9 @@
+/debugging
+/linvenv
+/logs
+/sandbox
+/venv
+/generated_playlists
+/.vscode
+/.vs
+.env
