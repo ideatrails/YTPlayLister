@@ -8,9 +8,20 @@ import logging
 import os
 import re
 
-import google_auth_oauthlib.flow
+# google-auth 
+# https://google-auth.readthedocs.io/en/master/
+#   oauth2client was recently deprecated in favor of this library.
+#   For more details on the deprecation, see oauth2client deprecation.
+# https://google-auth.readthedocs.io/en/master/user-guide.html
+#   pip install --upgrade google-auth
+
+# import google_auth_oauthlib.flow
+# from google_auth_oauthlib.flow import Flow
 import googleapiclient.discovery
 import googleapiclient.errors
+from google.oauth2 import service_account
+
+
 
 def main():
     load_dotenv()
@@ -39,29 +50,27 @@ def main():
     logging.info(vars(args))
 
     corpus = args.corpus
-    playlist = args.playlist 
+    playlist = args.playlist
 
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    # os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     api_service_name = "youtube"
     api_version = "v3"
-    
-    # scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
     # # A. Get credentials and create an API client
-    # client_secrets_file = "YOUR_CLIENT_SECRET_FILE.json"
-    # flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-    #     client_secrets_file, scopes)
-    # credentials = flow.run_console()
-    #
-    # youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
+    scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
+    client_secrets_file = "./yt-trans-trail-6362902f66f4.json"
+    credentials = service_account.Credentials.from_service_account_file(client_secrets_file)
+    scoped_credentials = credentials.with_scopes(scopes)
+    youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=scoped_credentials)
 
     # OR B. use the API_Key
-    token = os.environ.get("api-token")
-    api_key=token
-    youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey=api_key)
+    # token = os.environ.get("api-token")
+    # api_key=token
+    # youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey=api_key)
+
     nextPageToken=""
     vid_input_list = []
 
@@ -112,8 +121,8 @@ def main():
             break
 
     df_jobs_new = pd.DataFrame(vid_input_list, columns=['pub_date', 'title', 'video', 'ref', 'thumb', 'desc'])
-    df_jobs_new.to_csv(f"./generated_playlists/playlist_v3_{corpus}_{playlist}.csv", index=None)
-    df_jobs_new.to_json(f"./generated_playlists/playlist_v3_{corpus}_{playlist}.json", orient="records", indent=2)
+    df_jobs_new.to_csv(f"../generated_playlists/playlist_v3_{corpus}_{playlist}.csv", index=None)
+    df_jobs_new.to_json(f"../generated_playlists/playlist_v3_{corpus}_{playlist}.json", orient="records", indent=2)
     outputJson = df_jobs_new.to_json(orient="records")
     parsed = json.loads(outputJson)
     print(json.dumps(parsed))
@@ -149,7 +158,7 @@ def config_argparse(version):
                             help='show progress of search')
 
     parser.add_argument(    '-v', action='version')
-     
+
     parser.add_argument(    '-l', '--logLevel', 
                             type=str,
                             action='store',

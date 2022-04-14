@@ -5,10 +5,9 @@
 # linux python directory linvenv
 # (dev windows WSL2 directory venv)
 # -----------------------------------------------------------------------------
-AppDirProd="/home/gesso/prod/ytplaylister"
-AppDirDev="/mnt/e/repo/vidory/YTPlayLister"
+AppDirProd="/home/gesso/prod/vidory/YTPlayLister"
+AppDirDev="/home/coolin/staging/vidory/YTPlayLister"
 
-enable_cmd=
 prod=
 
 if [[ $prod ]]; then
@@ -32,6 +31,9 @@ do
         e) enable_cmd=${OPTARG};;
     esac
 done
+
+#overrides
+#enable_cmd=
 
 # echo "corpus: $corpus";
 # echo "playlist: $playlist";
