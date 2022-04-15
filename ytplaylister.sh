@@ -5,17 +5,7 @@
 # linux python directory linvenv
 # (dev windows WSL2 directory venv)
 # -----------------------------------------------------------------------------
-AppDirProd="/home/gesso/prod/vidory/YTPlayLister"
-AppDirDev="/home/coolin/staging/vidory/YTPlayLister"
-
-prod=
-
-if [[ $prod ]]; then
-    AppDir=$AppDirProd
-else
-    AppDir=$AppDirDev
-fi
-
+AppDir=${APPDIR_YTPL}
 VenvCmd_wsl="${AppDir}/linvenv/bin/activate"
 
 if [[ $# < 3 ]]; then

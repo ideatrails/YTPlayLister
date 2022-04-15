@@ -1,6 +1,6 @@
 import argparse
 from datetime import datetime
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import pandas as pd
 
 import json
@@ -22,9 +22,8 @@ import googleapiclient.errors
 from google.oauth2 import service_account
 
 
-
 def main():
-    load_dotenv()
+    # load_dotenv()
     version = 0.8
     parser = config_argparse(version)
     args = parser.parse_args()
@@ -61,7 +60,7 @@ def main():
 
     # # A. Get credentials and create an API client
     scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
-    client_secrets_file = "./yt-trans-trail-6362902f66f4.json"
+    client_secrets_file = os.environ.get("GOOGLE_YT_CRED")
     credentials = service_account.Credentials.from_service_account_file(client_secrets_file)
     scoped_credentials = credentials.with_scopes(scopes)
     youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=scoped_credentials)
